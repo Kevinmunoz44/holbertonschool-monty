@@ -75,6 +75,8 @@ NOTE: No more than one instruction per line is allowed, there can however be as 
 
 `3`
 
+<hr>
+
 ### AUTHOR
 
 - Kevin Munoz - kevinmunozb04@gmail.com
