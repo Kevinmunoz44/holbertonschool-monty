@@ -8,6 +8,10 @@ Format for user to write in "testfile.m": `opcode argument`
 
 NOTE: No more than one instruction per line is allowed, there can however be as many spaces, new lines or tabs before or after the instruction.
 
+### Compilator
+
+`$ gcc -Wall -Werror -Wextra -pedantic *.c -o monty`
+
 ### Allowable opcodes and what they do
 
 |Opcode |Functionality |
