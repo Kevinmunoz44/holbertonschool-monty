@@ -56,7 +56,7 @@ int main(int argc, char **argv)
         }
         else if (token != NULL && strcmp(token, "pall") == 0)
             pall(stack);
-        else
+        else if (token != NULL && strcmp(token, "push") == 0)
         {
             fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token);
             free(line);
