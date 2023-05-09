@@ -11,42 +11,65 @@
 int main(int argc, char **argv)
 {
     FILE *file;
-    char *line = NULL, *token;
+    char *line = NULL;
     size_t len = 0;
     ssize_t read;
     stack_t *stack = NULL;
     unsigned int line_number = 1;
-    
+
     if (argc != 2)
-        return (fprintf(stderr, "USAGE: monty file\n"), EXIT_FAILURE);
+    {
+        fprintf(stderr, "USAGE: monty file\n");
+        exit(EXIT_FAILURE);
+    }
+
     file = fopen(argv[1], "r");
     if (file == NULL)
-        return (fprintf(stderr, "Error: Can't open file %s\n", argv[1]), EXIT_FAILURE);
+    {
+        fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
+        exit(EXIT_FAILURE);
+    }
+
     while ((read = getline(&line, &len, file)) != -1)
     {
-        if (strspn(line, " \t\n") == (size_t)read)
+        if (line[0] == '\n') /* Verifica si la línea está en blanco*/
+        {
+            line_number++;
             continue;
-        token = strtok(line, " \n\t");
+        }
+
+        char *token = strtok(line, " \n\t");
         if (token != NULL && strcmp(token, "push") == 0)
         {
             token = strtok(NULL, " \n\t");
-            if (token != NULL && ((isdigit(*token) ||
-                                   (*token == '-' && isdigit(*(token + 1)))) &&
-                                  strspn(token, "-0123456789") == strlen(token)))
+            if (token != NULL && ((isdigit(*token) || (*token == '-' && isdigit(*(token + 1))))
+                          && strspn(token, "-0123456789") == strlen(token)))
                 push(&stack, atoi(token));
             else
-                return (fprintf(stderr, "L%u: usage: push integer\n", line_number),
-                        free(line), fclose(file),
-                        free_stack(&stack), EXIT_FAILURE);
+            {
+                fprintf(stderr, "L%u: usage: push integer\n", line_number);
+                free(line);
+                fclose(file);
+                free_stack(&stack);
+                exit(EXIT_FAILURE);
+            }
         }
         else if (token != NULL && strcmp(token, "pall") == 0)
             pall(stack);
-        else
-            return (fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token),
-                    free(line),
-                    fclose(file), free_stack(&stack), EXIT_FAILURE);
+        else if (token != NULL && strcmp(token, "push" == 0) == 0)
+        {
+            fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token);
+            free(line);
+            fclose(file);
+            free_stack(&stack);
+            exit(EXIT_FAILURE);
+        }
         line_number++;
     }
-    free(line), fclose(file), free_stack(&stack);
-    return (EXIT_SUCCESS);
+
+    free(line);
+    fclose(file);
+    free_stack(&stack);
+
+    return EXIT_SUCCESS;
 }
