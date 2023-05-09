@@ -49,6 +49,14 @@ int main(int argc, char **argv)
         }
         else if (token != NULL && strcmp(token, "pall") == 0)
             pall(stack);
+        else
+        {
+            fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token);
+            free(line);
+            fclose(file);
+            free_stack(&stack);
+            exit(EXIT_FAILURE);
+        }
         line_number++;
     }
 
