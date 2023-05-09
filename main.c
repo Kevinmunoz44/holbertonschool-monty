@@ -11,6 +11,8 @@
 int main(int argc, char **argv)
 {
     FILE *file;
+    int i;
+    char *token;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -32,13 +34,10 @@ int main(int argc, char **argv)
 
     while ((read = getline(&line, &len, file)) != -1)
     {
-        char *token = strtok(line, " \n\t");
+        token = strtok(line, " \n\t");
         if (token != NULL && strcmp(token, "push") == 0)
         {
-            token = strtok(NULL, " \n\t");
-            if (token != NULL && isdigit(*token))
-                push(&stack, atoi(token));
-            else
+            if (token == NULL)
             {
                 fprintf(stderr, "L%u: usage: push integer\n", line_number);
                 free(line);
@@ -46,18 +45,21 @@ int main(int argc, char **argv)
                 free_stack(&stack);
                 exit(EXIT_FAILURE);
             }
+            for (i = 0; token[i] != '\0'; i++)
+            {
+                if (i == 0 && token[i] == '-')
+                    continue;
+                if (isdigit(token[i]) == 0)
+                {
+                    fprintf(stderr, "L%u: usage: push integer\n", line_number);
+                    free(line);
+                    fclose(file);
+                    free_stack(&stack);
+                    exit(EXIT_FAILURE);
+                }
+            }
+            push(&stack, atoi(token));
         }
-        else if (token != NULL && strcmp(token, "pall") == 0)
-            pall(stack);
-        else
-        {
-            fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token);
-            free(line);
-            fclose(file);
-            free_stack(&stack);
-            exit(EXIT_FAILURE);
-        }
-        line_number++;
     }
 
     free(line);
