@@ -11,6 +11,8 @@
 int main(int argc, char **argv)
 {
     FILE *file;
+    char *token;
+    bool unknown = false;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -38,12 +40,11 @@ int main(int argc, char **argv)
             continue;
         }
 
-        char *token = strtok(line, " \n\t");
+        token = strtok(line, " \n\t");
         if (token != NULL && strcmp(token, "push") == 0)
         {
             token = strtok(NULL, " \n\t");
-            if (token != NULL && ((isdigit(*token) || (*token == '-' && isdigit(*(token + 1))))
-                          && strspn(token, "-0123456789") == strlen(token)))
+            if (token != NULL && ((isdigit(*token) || (*token == '-' && isdigit(*(token + 1)))) && strspn(token, "-0123456789") == strlen(token)))
                 push(&stack, atoi(token));
             else
             {
@@ -51,18 +52,14 @@ int main(int argc, char **argv)
                 free(line);
                 fclose(file);
                 free_stack(&stack);
-                /*exit(EXIT_FAILURE);*/
+                exit(EXIT_FAILURE);
             }
         }
         else if (token != NULL && strcmp(token, "pall") == 0)
             pall(stack);
         else
         {
-            fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token);
-            free(line);
-            fclose(file);
-            free_stack(&stack);
-            exit(EXIT_FAILURE);
+            unknown = true;
         }
         line_number++;
     }
@@ -70,6 +67,12 @@ int main(int argc, char **argv)
     free(line);
     fclose(file);
     free_stack(&stack);
+
+    if (unknown)
+    {
+        fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token);
+        exit(EXIT_FAILURE);
+    }
 
     return EXIT_SUCCESS;
 }
