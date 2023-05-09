@@ -1,7 +1,5 @@
 #include "monty.h"
 
-#include "monty.h"
-
 /**
  * push - Insert a new entry into the table with the given name and value
  *
