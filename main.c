@@ -32,6 +32,12 @@ int main(int argc, char **argv)
 
     while ((read = getline(&line, &len, file)) != -1)
     {
+        if (line[0] == '\n') /* Verifica si la línea está en blanco*/
+        {
+            line_number++;
+            continue;
+        }
+
         char *token = strtok(line, " \n\t");
         if (token != NULL && strcmp(token, "push") == 0)
         {
@@ -50,14 +56,14 @@ int main(int argc, char **argv)
         }
         else if (token != NULL && strcmp(token, "pall") == 0)
             pall(stack);
-        else
+        /*else
         {
             fprintf(stderr, "L%u: unknown instruction %s\n", line_number, token);
             free(line);
             fclose(file);
             free_stack(&stack);
             exit(EXIT_FAILURE);
-        }
+        }*/
         line_number++;
     }
 
